@@ -26,7 +26,7 @@ export class GoalHiveCleanAction1 extends GoalAction {
   protected _targetPick(list: Cell[]) {
     const food = list.map(c => c.food);
     const max = Math.max(...food);
-    return !max ? Pathfinder.closest(this._ant.point, list).cell : list[food.indexOf(max)];
+    return !max ? Pathfinder.closest(this._ant.point, list).target : list[food.indexOf(max)];
   }
 
   constructor(mother: Mother, ant: Ant) {

@@ -44,10 +44,10 @@ export class Cell {
   }
 
   @computed get targetBy() {
-    return this._mother.mind.list.filter((a) => this === a.goal._target);
+    return this._mother.mind.goalList.filter((g) => g.target === this);
   }
   // FIXME: cycle
-  targetByExclude = computedFn((ant: Ant) => this._mother.mind.list.filter(a => a !== ant).filter((a) => this === a.goal._target));
+  // targetByExclude = computedFn((ant: Ant) => this._mother.mind.list.filter(a => a !== ant).filter((a) => this === a.goal._target));
 
   constructor(private _mother: Mother, point: IPointState, cell: ICell) {
     this.point = new Point(point);

@@ -1,13 +1,13 @@
 import { Cell, Pathfinder } from '@domain/Area';
 import { EActionName } from '@domain/Game/Action';
-import { Ant } from '@domain/Mind';
-import { GoalAction } from '@domain/Mind/Goal/Action/Action';
+import { GoalActionNew } from '@domain/Mind/Goal/Action/ActionNew';
 import { Mother } from '@domain/Mother';
 import { computed } from 'mobx';
+import { Ant } from '@domain/Mind/Ant';
 
-export class GoalGrowAction1 extends GoalAction {
+export class GoalGrowAction1New extends GoalActionNew {
   @computed get end() {
-    return this._ant.payload === 0;
+    return this.executor.payload === 0;
   }
 
   actionName(distance: number): EActionName {
@@ -24,10 +24,10 @@ export class GoalGrowAction1 extends GoalAction {
   }
 
   protected _targetPick(list: Cell[]) {
-    return Pathfinder.closest(this._ant.point, list).target;
+    return Pathfinder.closest(this.executor.point, list).target;
   }
 
-  constructor(mother: Mother, ant: Ant) {
-    super(mother, ant);
+  constructor(mother: Mother, executor: Ant, target: Cell) {
+    super(mother, executor, target);
   }
 }

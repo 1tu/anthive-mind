@@ -16,3 +16,11 @@ export interface IGoal extends IDisposable {
 export interface IGoalCtor {
   new(mother: Mother, ant: Ant): IGoal;
 }
+
+export interface IGoalNew {
+  readonly actionList: IGoalAction[];
+  readonly targetDistance: number;
+  readonly gameAction: GameAction;
+  readonly executor: Ant;
+  readonly target: Cell;
+}

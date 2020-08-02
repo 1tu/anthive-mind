@@ -1,4 +1,4 @@
-import { IPointState } from '@domain/Area';
+import { IPointState, Pathfinder } from '@domain/Area';
 import { action, observable } from 'mobx';
 import { EActionDirection } from '@domain/Game/Action';
 
@@ -25,5 +25,9 @@ export class Point implements IPointState {
 
   toJSON() {
     return { x: this.x, y: this.y }
+  }
+
+  distanceTo(point: Point) {
+    return Pathfinder.manhattanDistance(this, point);
   }
 }

@@ -33,7 +33,7 @@ export abstract class Goal extends Disposable implements IGoal {
   }
 
   @computed get targetDistance() {
-    return this.target?.distanceTo(this._ant.point) ?? -1;
+    return this.target?.point.distanceTo(this._ant.point) ?? -1;
   }
 
   @computed protected get _targetMove(): IPointState | undefined {

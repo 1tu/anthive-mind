@@ -24,7 +24,7 @@ export class GoalWaitAction0 extends GoalAction {
   }
 
   protected _targetPick(list: Cell[]) {
-    return Pathfinder.closest(this._ant.point, list).cell;
+    return Pathfinder.closest(this._ant.point, list).target;
   }
 
   constructor(mother: Mother, ant: Ant) {

@@ -1,7 +1,12 @@
-import { computed } from 'mobx';
-import { IPointState, Cell } from '@domain/Area';
-import { Mother } from '@domain/Mother';
+import { IPointState } from '@domain/Area';
 import { Point } from '@domain/Area/Point';
+import { Mother } from '@domain/Mother';
+import { computed } from 'mobx';
+
+export interface IPathfinderClosest<T> {
+  distance: number;
+  target: T;
+}
 
 export class Pathfinder {
   static vector(current: IPointState, target: IPointState): IPointState {
@@ -28,10 +33,10 @@ export class Pathfinder {
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
   }
 
-  static closest(start: Point, targetList: Cell[]) {
+  static closest<T extends { distanceTo(point: Point): number }>(start: Point, targetList: T[]): IPathfinderClosest<T> {
     const distanceList = targetList.map((c) => c.distanceTo(start));
     const distanceMin = Math.min(...distanceList);
-    return { distance: distanceMin, cell: targetList[distanceList.indexOf(distanceMin)] };
+    return { distance: distanceMin, target: targetList[distanceList.indexOf(distanceMin)] };
   }
 
   @computed get height() {
@@ -107,10 +112,8 @@ export class Pathfinder {
     const mypathEnd = new Node(null, end);
     const AStar: { [nodeId: string]: boolean } = {};
     const path = [mypathStart];
-    const Closed: Node[] = [];
     let result: IPointState[] = [];
 
-    // iterate through the open list until none are left
     while (path.length) {
       let max = this.size;
       let min = -1;
@@ -124,11 +127,6 @@ export class Pathfinder {
       let node = path.splice(min, 1)[0];
       if (node.value === mypathEnd.value) {
         result = this._backtrace(node).slice(1);
-        // let myPath = Closed[Closed.push(node) - 1];
-        // do {
-        //   result.push(myPath.point);
-        // } while ((myPath = myPath.parent));
-        // result.reverse();
       } else {
         this.neighbours(node.point).forEach((point) => {
           let nodeNext = new Node(node, point);
@@ -139,8 +137,6 @@ export class Pathfinder {
             AStar[nodeNext.value] = true;
           }
         });
-
-        Closed.push(node);
       }
     }
     return result;

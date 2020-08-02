@@ -1,41 +1,32 @@
 import { IAnt } from '@domain/Game';
 import { IActionServer } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind';
+import { StrategyFeed } from '@domain/Mind/Strategy/StrategyFeed';
+import { StrategyGrow } from '@domain/Mind/Strategy/StrategyGrow';
 import { Mother } from '@domain/Mother';
 import difference from 'lodash/difference';
-import { action, autorun, computed, observable, getDependencyTree } from 'mobx';
+import { action, autorun, computed, getDependencyTree, observable } from 'mobx';
 
 export class Mind {
   private _isInit = false;
   actionList: IActionServer[] = [];
 
-  @observable public dict: { [id: string]: Ant } = {};
-  @computed public get list() {
+  @observable dict: { [id: string]: Ant } = {};
+  @computed get list() {
     return Object.values(this.dict);
   }
 
+  strategyList = [new StrategyGrow(this._mother, this)];
+  // strategyList = [new StrategyFeed(this._mother), new StrategyGrow(this._mother)];
   @computed get goalList() {
-    return this.list.map((a) => a.goal);
+    return this.strategyList.map((s) => s._goalList).flat();
   }
 
   @computed get actionListComputed() {
-    const result: IActionServer[] = [];
-    const list = [...this.list];
-    let i = 0;
-    while (list.length) {
-      const ant = list[i];
-      const action = ant.goal.gameAction;
-      if (action) {
-        result.push(action.toJSON());
-        list.splice(i, 1);
-      } else i = i >= list.length ? 0 : i + 1;
-    }
-    return result;
-
-    // return this.list.reduce((acc, ant) => {
-    //   acc[ant.id] = ant.goal.action.toJSON();
-    //   return acc;
-    // }, {} as any);
+    return this.strategyList.reduce((acc, s) => {
+      acc.push(...s.actionList.map(a => a.toJSON()));
+      return acc;
+    }, [] as IActionServer[]);
   }
 
   constructor(private _mother: Mother) {

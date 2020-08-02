@@ -28,9 +28,7 @@ export class Area {
     return this.list.filter((c) => c.isHiveMyWithFood);
   }
   // FIXME: cycle
-  listFoodFree = computedFn((ant: Ant) => {
-    return this.list.filter((c) => !!c.targetByExclude(ant).length);
-  });
+  // listFoodFree = computedFn((ant: Ant) => this.list.filter((c) => !!c.targetByExclude(ant).length));
 
   constructor(private _mother: Mother) {}
 

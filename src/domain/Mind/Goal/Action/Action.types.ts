@@ -7,3 +7,11 @@ export interface IGoalAction {
   actionName(distance: number): EActionName;
   isTargetValid(target?: Cell): boolean;
 }
+
+export interface IGoalActionNew {
+  readonly end: boolean;
+  readonly target: Cell;
+
+  actionName(distance: number): EActionName;
+  isTargetValid(target?: Cell): boolean;
+}

@@ -7,11 +7,11 @@ import { Mother } from '@domain/Mother';
 import { IGoal } from '@domain/Mind/Goal/Goal.types';
 
 export class GoalGrow extends Goal {
-  static NEED = (mother: Mother, ant: Ant, goal?: IGoal) =>
-    (goal && goal instanceof GoalGrow && goal.action instanceof GoalGrowAction1) ||
-    mother.area.listFood.length > mother.mind.list.filter((a) =>
-      a !== ant && a._goal instanceof GoalGrow && a._goal.action instanceof GoalGrowAction0
-    ).length;
+  // static NEED = (mother: Mother, ant: Ant, goal?: IGoal) =>
+  //   (goal && goal instanceof GoalGrow && goal.action instanceof GoalGrowAction1) ||
+  //   mother.area.listFood.length > mother.mind.list.filter((a) =>
+  //     a !== ant && a._goal instanceof GoalGrow && a._goal.action instanceof GoalGrowAction0
+  //   ).length;
 
   actionList: IGoalAction[] = [new GoalGrowAction0(this._mother, this._ant), new GoalGrowAction1(this._mother, this._ant)];
 
