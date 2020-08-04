@@ -12,9 +12,9 @@ export const payload: IInput[] = [
     ],
     canvas: {
       cells: [
-        [new CM(null, 1), {}, {}, new CM(null, undefined, 1)],
+        [new CM(0, 1), {}, {}, new CM(0, undefined, 1)],
         [new CM(5), {}, new CM(2, 1), {}],
-        [new CM(9), {}, new CM(null, null, null), {}],
+        [new CM(9), {}, new CM(0, null, null), {}],
       ],
     },
   },
@@ -27,9 +27,9 @@ export const payload: IInput[] = [
     ],
     canvas: {
       cells: [
-        [new CM(9, 1), {}, new CM(1), new CM(null, undefined, 1)],
+        [new CM(9, 1), {}, new CM(1), new CM(0, undefined, 1)],
         [new CM(4), {}, new CM(1, 1), {}],
-        [new CM(9), {}, new CM(null, null, null), {}],
+        [new CM(9), {}, new CM(0, null, null), {}],
       ],
     },
   },
@@ -42,9 +42,9 @@ export const payload: IInput[] = [
     ],
     canvas: {
       cells: [
-        [{}, new CM(1, 1), {}, new CM(null, undefined, 1)],
-        [new CM(4), {}, new CM(null, 1), {}],
-        [new CM(9), {}, new CM(null, null, null), {}],
+        [{}, new CM(1, 1), {}, new CM(0, undefined, 1)],
+        [new CM(4), {}, new CM(0, 1), {}],
+        [new CM(9), {}, new CM(0, null, null), {}],
       ],
     },
   },
@@ -53,13 +53,13 @@ export const payload: IInput[] = [
     id: '1',
     ants: [
       { id: 1, wasted: 0, age: 14, health: 7, payload: 4, point: { x: 2, y: 0 }, event: 'birth' },
-      { id: 17, wasted: 4, age: 1, health: 4, payload: 0, point: { x: 1, y: 1 }, event: 'good' },
+      { id: 17, wasted: 4, age: 1, health: 9, payload: 0, point: { x: 1, y: 1 }, event: 'good' },
     ],
     canvas: {
       cells: [
-        [{}, {}, new CM(1, 1), new CM(null, undefined, 1)],
-        [new CM(4), new CM(null, 1), {}, {}],
-        [new CM(9), {}, new CM(null, null, null), {}],
+        [{}, {}, new CM(1, 1), new CM(0, undefined, 1)],
+        [new CM(4), new CM(0, 1), {}, {}],
+        [new CM(9), {}, new CM(0, null, null), {}],
       ],
     },
   },
@@ -68,13 +68,13 @@ export const payload: IInput[] = [
     id: '1',
     ants: [
       { id: 1, wasted: 0, age: 14, health: 7, payload: 4, point: { x: 2, y: 0 }, event: 'birth' },
-      { id: 17, wasted: 4, age: 1, health: 8, payload: 0, point: { x: 1, y: 1 }, event: 'good' },
+      { id: 17, wasted: 4, age: 1, health: 9, payload: 0, point: { x: 1, y: 2 }, event: 'good' },
     ],
     canvas: {
       cells: [
-        [{}, {}, new CM(1, 1), new CM(null, undefined, 1)],
-        [new CM(4), new CM(null, 1), {}, {}],
-        [new CM(9), {}, new CM(null, null, null), {}],
+        [{}, {}, new CM(1, 1), new CM(0, undefined, 1)],
+        [new CM(4), {}, {}, {}],
+        [new CM(9), new CM(0, 1), new CM(0, null, null), {}],
       ],
     },
   },

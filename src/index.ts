@@ -1,5 +1,4 @@
-import { Game } from './domain/Game/Game';
-import { IInput } from '@domain/Game';
+import { Game, IInput } from '@domain/Game';
 
 const game = new Game(7070);
 
@@ -12,7 +11,7 @@ if (IS_DEV) {
 
   async function runServer() {
     // console.log(game.handleData(require('../data/payload.json')));
-    const res = (require('../data/pTargetBy').payload as IInput[]).map((item) => async () => {
+    const res = (require('../data/pFeed').payload as IInput[]).map((item) => async () => {
       await delay(500);
       return item;
     });
@@ -24,5 +23,5 @@ if (IS_DEV) {
     console.log('RESULT', JSON.stringify(result, null, 2));
   }
 
-  runServer();
+  runServer().then();
 }

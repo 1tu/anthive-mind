@@ -1,8 +1,8 @@
 export interface IActionServer {
   antId: number;
-  act: EActionName,
-  dir?: EActionDirection,
-};
+  act: EActionName;
+  dir?: EActionDirection;
+}
 
 export enum EActionDirection {
   UP = 'up',

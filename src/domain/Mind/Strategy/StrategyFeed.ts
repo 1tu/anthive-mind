@@ -1,20 +1,28 @@
-import { IGoalNew } from '@domain/Mind/Goal';
-import { GoalGrowNew } from '@domain/Mind/Goal/Grow/GrowNew';
-import { Mother } from '@domain/Mother';
-import { computed } from 'mobx';
+import { IGoal } from '@domain/Mind/Goal';
+import { Root } from '@domain/Root';
+import { action, computed } from 'mobx';
+import { Ant } from '@domain/Mind';
+import { GoalFeed } from '@domain/Mind/Goal/Feed/Feed';
+import { Strategy } from '@domain/Mind/Strategy/Strategy';
 
-export class StrategyFeed {
+export class StrategyFeed extends Strategy<Ant> {
+  static NEED = (current: number) => current < Root.config.HEALTH_MAX * 0.3;
+
   @computed get targetList() {
-    return this._mother.area.listFood;
+    return this._root.population.list.filter((a) => StrategyFeed.NEED(a.health));
   }
 
-  @computed get goalList(): IGoalNew[] {
-    return this.targetList.map(c => new GoalGrowNew(this._mother, c));
+  _goalCreate(item: Ant): IGoal {
+    return new GoalFeed(this._root, this, [], item);
   }
 
-  @computed get actionList() {
-    return this.goalList.filter(g => !g.executor).map(g => g.gameAction);
+  _goalDeleteNeed(item: IGoal) {
+    return true;
   }
 
-  constructor(private _mother: Mother) {}
+  @action
+  end(goal: IGoal): void {
+    this.goalMap.delete(goal.unit!);
+    super.end(goal);
+  }
 }

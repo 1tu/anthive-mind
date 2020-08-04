@@ -1,40 +1,26 @@
-import { Pathfinder } from '@domain/Area';
-import { IGoalNew } from '@domain/Mind/Goal';
-import { GoalGrowNew } from '@domain/Mind/Goal/Grow/GrowNew';
-import { Mother } from '@domain/Mother';
-import { autorun, computed, observable } from 'mobx';
-import { Mind } from '@domain/Mind/Mind';
+import { IGoal } from '@domain/Mind/Goal';
+import { action, computed, observable } from 'mobx';
+import { Cell } from '@domain/Area';
+import { Strategy } from '@domain/Mind/Strategy/Strategy';
+import { GoalGrow } from '@domain/Mind/Goal/Grow/Grow';
+import { Ant } from '@domain/Mind';
 
-export class StrategyGrow {
+export class StrategyGrow extends Strategy<Cell> {
   @computed get targetList() {
-    return this._mother.area.listFood;
+    return this._root.area.listFood;
   }
 
-  @computed get executorList() {
-    return this._mind.list.filter((a) => a.payload < Mother.config.PAYLOAD_MAX);
+  _goalCreate(item: Cell): IGoal {
+    return new GoalGrow(this._root, this, [item]);
   }
 
-  @observable.ref _goalList: IGoalNew[];
-  @computed get goalList(): IGoalNew[] {
-    const executorList = [...this.executorList]
-    return this.targetList.map(target => ({ target, closest: Pathfinder.closest(target.point, executorList) }))
-      .sort((a, b) => a.closest.distance - b.closest.distance)
-      .map((v) => {
-        let ant = v.closest.target;
-        const index = executorList.indexOf(ant);
-        if (index !== -1) executorList.splice(index, 1);
-        else ant = Pathfinder.closest(v.target.point, executorList).target;
-        return ant ? new GoalGrowNew(this._mother, ant, v.target) : undefined;
-      });
+  _goalDeleteNeed(item: IGoal) {
+    return true;
   }
 
-  @computed get actionList() {
-    return this.goalList.filter((g) => g).map((g) => g.gameAction);
-  }
-
-  constructor(private _mother: Mother, private _mind: Mind) {
-    autorun(() => {
-      this._goalList = this.goalList;
-    })
+  @action
+  end(goal: IGoal): void {
+    this.goalMap.delete(goal.targetAllocate!);
+    super.end(goal);
   }
 }

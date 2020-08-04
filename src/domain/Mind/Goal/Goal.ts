@@ -1,71 +1,88 @@
-import { Disposable } from '@common/class/Disposable/Disposable';
 import { Cell, IPointState, Pathfinder, Point } from '@domain/Area';
 import { EActionName, GameAction } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind';
-import { IGoalAction } from '@domain/Mind/Goal/Action/Action.types';
+import { IGoalActionCtor } from '@domain/Mind/Goal/Action/Action.types';
 import { IGoal } from '@domain/Mind/Goal/Goal.types';
-import { Mother } from '@domain/Mother';
-import { autorun, computed, observable, onBecomeUnobserved, trace } from 'mobx';
+import { Root } from '@domain/Root';
+import { computed, observable, reaction, trace } from 'mobx';
+import { IStrategy } from '@domain/Mind/Strategy/Strategy.types';
+import { Disposable } from '@common/class/Disposable/Disposable';
 
 export abstract class Goal extends Disposable implements IGoal {
-  abstract get actionList(): IGoalAction[];
+  abstract get priority(): number;
+  abstract get actionListCtor(): IGoalActionCtor[];
 
-  private _actionIndex = 0;
-  @computed protected get action() {
-    let index = this._actionIndex;
-    while (this.actionList[index].end) {
-      const nextIndex = index + 1;
-      index = nextIndex < this.actionList.length ? nextIndex : 0;
-      IS_DEV && console.warn(`[GOAL ${this._ant.id}] next ACTION`, index);
-    }
-    return this.actionList[this._actionIndex = index];
+  @computed get actionList() {
+    return this.unit && this.actionListCtor.map((Action, index) => new Action(this._root, this.unit!, this._targetList[index]));
   }
 
-  @observable _target?: Cell;
-  @computed get target(): Cell {
+  get targetAllocate(): Cell | undefined {
+    return this._targetList[0];
+  }
+
+  @observable unit?: Ant;
+
+  @computed get target() {
     IS_DEV && trace();
-    return this.action.target;
+    return this.action?.target;
+  }
+
+  actionIndex = 0;
+  @computed protected get action() {
+    if (!this.actionList) return;
+    let index = this.actionIndex;
+    while (this.actionList[index]?.end) {
+      index++;
+      IS_DEV && console.warn(`[GOAL ${this.unit?.id}] next ACTION`, index);
+    }
+    return this.actionList[(this.actionIndex = index)];
   }
 
   @computed get gameAction() {
-    if (!this.target || !this._targetMove) return new GameAction(this._ant, EActionName.STAY);
-    return new GameAction(this._ant, this.action.actionName(this.targetDistance), new Point(this._targetMove));
+    if (!this.unit || !this.action) return;
+    if (!this._targetMove) return new GameAction(this.unit, EActionName.STAY);
+    return new GameAction(this.unit, this.action.actionName(this.targetDistance), new Point(this._targetMove));
   }
 
   @computed get targetDistance() {
-    return this.target?.point.distanceTo(this._ant.point) ?? -1;
+    return this.unit && this.target ? this.target.point.distanceTo(this.unit.point) : 0;
   }
 
-  @computed protected get _targetMove(): IPointState | undefined {
-    if (!this.target) return;
-    const { x, y } = Pathfinder.vector(this._ant.point, this.target.point);
-    const temp = [
+  @computed protected get _targetMove() {
+    const unit = this.unit;
+    const target = this.target;
+    if (!target || !unit) return;
+    const { x, y } = Pathfinder.vector(unit.point, target.point);
+    const temp: IPointState[] = [
       { x: Math.sign(x), y: 0 },
       { x: 0, y: Math.sign(y) },
     ];
     const xPrior = Math.abs(x) >= Math.abs(y);
-    const moveList: IPointState[] = [xPrior ? temp.shift() : temp.pop(), temp.pop()];
+    const moveList: IPointState[] = [xPrior ? temp.shift()! : temp.pop()!, temp.pop()!];
     const move = moveList.find((d) => {
-      const point = { x: this._ant.point.x + d.x, y: this._ant.point.y + d.y };
-      return this.target.point.equal(point) || (this._mother.area.pathfinder.pointValid(point) && this._mother.area.cellGet(point).isWalkable);
+      const point = { x: unit.point.x + d.x, y: unit.point.y + d.y };
+      return this.target?.point.equal(point) || (this._root.area.pathfinder.pointValid(point) && this._root.area.cellGet(point).isWalkable);
     });
     if (move) return move;
-    const path = this._mother.area.pathfinder.find(this._ant.point, this.target.point);
-    IS_DEV && console.warn(`[PATH ${this._ant.id}]`, JSON.stringify(path));
-    return path.length && Pathfinder.vector(this._ant.point, path[0]);
+    const path = this._root.area.pathfinder.find(unit.point, target.point);
+    IS_DEV && console.warn(`[PATH ${unit.id}]`, JSON.stringify(path));
+    return path.length && Pathfinder.vector(unit.point, path[0]);
   }
 
-  constructor(protected _mother: Mother, protected _ant: Ant) {
+  constructor(protected _root: Root, private _strategy: IStrategy<any>, protected _targetList: Cell[], unit?: Ant) {
     super();
-    this.disposes.push(
-      autorun(() => {
-        this._target = this.target;
-      })
+    this.unit = unit;
+    reaction(
+      () => this.action,
+      () => {
+        if (this.actionList && this.actionIndex >= this.actionList.length) this.dispose();
+      }
     );
-    if (IS_DEV) {
-      onBecomeUnobserved(this, 'target', () => {
-        console.log('!!!!!!!!!!!!!!UN', this._ant.id);
-      });
-    }
+  }
+
+  dispose() {
+    super.dispose();
+    this._strategy.end(this);
+    this.unit = undefined;
   }
 }

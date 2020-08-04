@@ -1,7 +1,7 @@
 import { Disposable } from '@common/class/Disposable/Disposable';
 import { Cell, Point, TAntId, Pathfinder } from '@domain/Area';
 import { IAnt } from '@domain/Game';
-import { Mother } from '@domain/Mother';
+import { Root } from '@domain/Root';
 import { action, computed, observable } from 'mobx';
 
 export class Ant extends Disposable {
@@ -10,35 +10,31 @@ export class Ant extends Disposable {
   //   IS_DEV && trace();
   //   let GoalNext: IGoalCtor;
   //   if (GoalFeed.NEED(this.health, Mother.config.HEALTH_MAX, this._goal instanceof GoalFeed)) GoalNext = GoalFeed;
-  //   else if (GoalGrow.NEED(this._mother, this, this._goal)) GoalNext = GoalGrow;
-  //   else if (GoalHiveClean.NEED(this._mother, this, this._goal instanceof GoalHiveClean)) GoalNext = GoalHiveClean;
+  //   else if (GoalGrow.NEED(this._root, this, this._goal)) GoalNext = GoalGrow;
+  //   else if (GoalHiveClean.NEED(this._root, this, this._goal instanceof GoalHiveClean)) GoalNext = GoalHiveClean;
   //   else GoalNext = GoalWait;
   //   if (this._goal instanceof GoalNext) return this._goal;
   //   else {
   //     (this._goal as IGoal)?.dispose();
-  //     this._goal = new GoalNext(this._mother, this);
+  //     this._goal = new GoalNext(this._root, this);
   //     console.warn(`[next GOAL ${this.id}] ${this._goal.constructor.name}`);
   //     return this._goal;
   //   }
   // }
 
   point: Point;
-  @observable health: number;
-  @observable payload: number;
+  @observable health!: number;
+  @observable payload!: number;
 
   @computed get canWalk() {
-    return !!this._mother.area.pathfinder.neighbours(this.point).length;
+    return !!this._root.area.pathfinder.neighbours(this.point).length;
   }
 
   @computed get cell(): Cell {
-    return this._mother.area.cellGet(this.point);
+    return this._root.area.cellGet(this.point);
   }
 
-  @computed get execute() {
-    return this._mother.mind.goalList.find(g => g.executor === this);
-  }
-
-  constructor(private _mother: Mother, public id: TAntId, ant: IAnt) {
+  constructor(private _root: Root, public id: TAntId, ant: IAnt) {
     super();
     this.point = new Point(ant.point);
     this.update(ant);

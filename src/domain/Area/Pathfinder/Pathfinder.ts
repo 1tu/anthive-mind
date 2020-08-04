@@ -1,6 +1,6 @@
 import { IPointState } from '@domain/Area';
 import { Point } from '@domain/Area/Point';
-import { Mother } from '@domain/Mother';
+import { Root } from '@domain/Root';
 import { computed } from 'mobx';
 
 export interface IPathfinderClosest<T> {
@@ -9,6 +9,15 @@ export interface IPathfinderClosest<T> {
 }
 
 export class Pathfinder {
+  static backtrace(node: Node) {
+    const path = [node.point];
+    while (node.parent) {
+      node = node.parent;
+      path.push(node.point);
+    }
+    return path.reverse();
+  }
+
   static vector(current: IPointState, target: IPointState): IPointState {
     return { x: target.x - current.x, y: target.y - current.y };
   }
@@ -33,23 +42,27 @@ export class Pathfinder {
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
   }
 
-  static closest<T extends { distanceTo(point: Point): number }>(start: Point, targetList: T[]): IPathfinderClosest<T> {
+  static closest<T extends { distanceTo(point: Point): number }>(start: Point, targetList: T[], targetCurrent?: T): IPathfinderClosest<T> {
+    const distanceCurrent = targetCurrent?.distanceTo(start) ?? 9999;
     const distanceList = targetList.map((c) => c.distanceTo(start));
-    const distanceMin = Math.min(...distanceList);
-    return { distance: distanceMin, target: targetList[distanceList.indexOf(distanceMin)] };
+    const distanceMin = Math.min(...distanceList, distanceCurrent);
+    return {
+      distance: distanceMin,
+      target: distanceMin === distanceCurrent ? targetCurrent! : targetList[distanceList.indexOf(distanceMin)],
+    };
   }
 
   @computed get height() {
-    return this._mother.area.size.height;
+    return this._root.area.size.height;
   }
   @computed get width() {
-    return this._mother.area.size.width;
+    return this._root.area.size.width;
   }
   @computed get size() {
     return this.width * this.height;
   }
 
-  constructor(private _mother: Mother) {}
+  constructor(private _root: Root) {}
 
   neighbours({ x, y }: IPointState): IPointState[] {
     const N = y - 1,
@@ -98,7 +111,7 @@ export class Pathfinder {
   }
 
   canWalkHere(x: number, y: number) {
-    const cell = this._mother.area.cellGet({ x, y });
+    const cell = this._root.area.cellGet({ x, y });
     return cell?.isPathfindable;
   }
 
@@ -108,8 +121,8 @@ export class Pathfinder {
 
   find(start: IPointState, end: IPointState) {
     const distanceFunction = Pathfinder.manhattanDistance;
-    const mypathStart = new Node(null, start);
-    const mypathEnd = new Node(null, end);
+    const mypathStart = new Node(start);
+    const mypathEnd = new Node(end);
     const AStar: { [nodeId: string]: boolean } = {};
     const path = [mypathStart];
     let result: IPointState[] = [];
@@ -124,12 +137,12 @@ export class Pathfinder {
         }
       }
 
-      let node = path.splice(min, 1)[0];
+      const node = path.splice(min, 1)[0];
       if (node.value === mypathEnd.value) {
-        result = this._backtrace(node).slice(1);
+        result = Pathfinder.backtrace(node).slice(1);
       } else {
         this.neighbours(node.point).forEach((point) => {
-          let nodeNext = new Node(node, point);
+          const nodeNext = new Node(point, node);
           if (!AStar[nodeNext.value]) {
             nodeNext.g = node.g + distanceFunction(point, node.point);
             nodeNext.f = nodeNext.g + distanceFunction(point, mypathEnd.point);
@@ -141,15 +154,6 @@ export class Pathfinder {
     }
     return result;
   }
-
-  private _backtrace(node: Node) {
-    var path = [node.point];
-    while (node.parent) {
-      node = node.parent;
-      path.push(node.point);
-    }
-    return path.reverse();
-  }
 }
 
 class Node {
@@ -160,5 +164,5 @@ class Node {
     return `${this.point.x}|${this.point.y}`;
   }
 
-  constructor(public parent: Node, public point: IPointState) {}
+  constructor(public point: IPointState, public parent?: Node) {}
 }

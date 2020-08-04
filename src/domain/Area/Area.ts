@@ -1,13 +1,11 @@
 import { Cell, IPointState, ISize, Pathfinder } from '@domain/Area';
 import { ICell, IMap } from '@domain/Game';
-import { Mother } from '@domain/Mother';
+import { Root } from '@domain/Root';
 import flatten from 'lodash/flatten';
 import { computed, observable } from 'mobx';
-import { Ant } from '@domain/Mind';
-import { computedFn } from 'mobx-utils';
 
 export class Area {
-  pathfinder = new Pathfinder(this._mother);
+  pathfinder = new Pathfinder(this._root);
 
   @observable map: Cell[][] = [];
   @computed get list() {
@@ -27,10 +25,8 @@ export class Area {
   @computed get listHiveWithFood() {
     return this.list.filter((c) => c.isHiveMyWithFood);
   }
-  // FIXME: cycle
-  // listFoodFree = computedFn((ant: Ant) => this.list.filter((c) => !!c.targetByExclude(ant).length));
 
-  constructor(private _mother: Mother) {}
+  constructor(private _root: Root) {}
 
   input(map: IMap) {
     if (!this._isInit) this._init(map);
@@ -60,7 +56,7 @@ export class Area {
     for (let y = 0; y < this.size.height; y++) {
       const rowOut: Cell[] = [];
       for (let x = 0; x < this.size.width; x++) {
-        rowOut.push(new Cell(this._mother, { x, y }, input[y][x]));
+        rowOut.push(new Cell(this._root, { x, y }, input[y][x]));
       }
       this.map.push(rowOut);
     }

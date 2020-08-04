@@ -2,7 +2,7 @@ import { Cell, Pathfinder } from '@domain/Area';
 import { EActionName } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind';
 import { GoalAction } from '@domain/Mind/Goal/Action/Action';
-import { Mother } from '@domain/Mother';
+import { Root } from '@domain/Root';
 import { computed } from 'mobx';
 
 export class GoalWaitAction0 extends GoalAction {
@@ -19,15 +19,17 @@ export class GoalWaitAction0 extends GoalAction {
   }
 
   @computed protected get _targetList(): Cell[] {
-    return this._mother.area.pathfinder.neighbours(this._ant.point).map(p => this._mother.area.cellGet(p))
-      .concat(this._mother.area.cellGet(this._ant.point));
+    return this._root.area.pathfinder
+      .neighbours(this._ant.point)
+      .map((p) => this._root.area.cellGet(p))
+      .concat(this._root.area.cellGet(this._ant.point));
   }
 
   protected _targetPick(list: Cell[]) {
     return Pathfinder.closest(this._ant.point, list).target;
   }
 
-  constructor(mother: Mother, ant: Ant) {
+  constructor(mother: Root, ant: Ant) {
     super(mother, ant);
   }
 }
