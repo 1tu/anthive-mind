@@ -94,7 +94,19 @@ export const payload: IInput[] = [
     canvas: {
       cells: [
         [{}, {}, new CM(0, undefined, 1), new CM(0, undefined, 1)],
-        [{}, {}, {}, new CM(4, 1, 1)],
+        [new CM(5), {}, {}, new CM(4, 1, 1)],
+        [{}, {}, {}, new CM(0, undefined, 1)],
+      ],
+    },
+  },
+  {
+    tick: 8,
+    id: '1',
+    ants: [{ id: 1, wasted: 0, age: 14, health: 7, payload: 0, point: { x: 3, y: 1 }, event: 'birth' }],
+    canvas: {
+      cells: [
+        [{}, {}, new CM(0, undefined, 1), new CM(0, undefined, 1)],
+        [new CM(5), {}, {}, new CM(4, 1, 1)],
         [{}, {}, {}, new CM(0, undefined, 1)],
       ],
     },

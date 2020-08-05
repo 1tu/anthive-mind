@@ -1,6 +1,6 @@
-import { Mother } from '@domain/Mother';
 import { IInput } from '@domain/Game';
 import { configure } from 'mobx';
+import { Root } from '@domain/Root';
 
 configure({ computedRequiresReaction: true });
 
@@ -17,12 +17,13 @@ export enum EGameEvent {
 }
 
 export class Game {
-  private _mother = new Mother();
+  private _root = new Root();
 
   constructor(port: number) {
     if (!IS_DEV) {
       const http = require('http');
       http
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .createServer((req: any, res: any) => {
           res.writeHead(200, {
             'Content-Type': 'application/json',
@@ -51,7 +52,5 @@ export class Game {
     }
   }
 
-  handleData = (data: IInput) => {
-    return this._mother.input(data);
-  };
+  handleData = (data: IInput) => this._root.input(data);
 }

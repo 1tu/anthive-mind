@@ -1,1 +1,1 @@
-export interface IAnt { }
+export interface IAnt {}

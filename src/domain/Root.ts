@@ -1,9 +1,9 @@
 import { IInput } from '@domain/Game';
 import { Area } from '@domain/Area';
-import { Mind } from '@domain/Mind';
+import { Mind, Population } from '@domain/Mind';
 import { transaction } from 'mobx';
 
-export class Mother {
+export class Root {
   static config = {
     PAYLOAD_MAX: 9,
     HEALTH_MAX: 9,
@@ -13,12 +13,13 @@ export class Mother {
   id!: string;
 
   area = new Area(this);
+  population = new Population(this);
   mind = new Mind(this);
 
   private _isInit = false;
 
   input(data: IInput) {
-    console.warn('TURN START:',  data.tick);
+    console.warn('TURN START:', data.tick);
     if (!this._isInit) {
       this.id = data.id;
       this._isInit = true;
@@ -26,10 +27,10 @@ export class Mother {
     this.tick = data.tick;
     transaction(() => {
       this.area.input(data.canvas);
-      this.mind.input(data.ants);
+      this.population.input(data.ants);
     });
     const z = this.mind.actionList;
-    console.warn('TURN END:',  data.tick);
+    console.warn('TURN END:', data.tick);
     return z;
   }
 }

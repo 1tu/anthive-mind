@@ -2,12 +2,12 @@ import { Cell, Pathfinder } from '@domain/Area';
 import { EActionName } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind';
 import { GoalAction } from '@domain/Mind/Goal/Action/Action';
-import { Mother } from '@domain/Mother';
+import { Root } from '@domain/Root';
 import { computed } from 'mobx';
 
 export class GoalWaitAction0 extends GoalAction {
   @computed get end() {
-    return false;
+    return this._unit.point.equal(this._target.point);
   }
 
   actionName(distance: number): EActionName {
@@ -15,19 +15,16 @@ export class GoalWaitAction0 extends GoalAction {
   }
 
   isTargetValid(target?: Cell): boolean {
-    return target && !target.isHiveMy;
+    return !!target && !target.isHiveMy;
   }
 
   @computed protected get _targetList(): Cell[] {
-    return this._mother.area.pathfinder.neighbours(this._ant.point).map(p => this._mother.area.cellGet(p))
-      .concat(this._mother.area.cellGet(this._ant.point));
+    return this._unit.cell.isHiveMy
+      ? this._root.area.pathfinder.neighbours(this._unit.point).map((p) => this._root.area.cellGet(p))
+      : [this._target];
   }
 
   protected _targetPick(list: Cell[]) {
-    return Pathfinder.closest(this._ant.point, list).cell;
-  }
-
-  constructor(mother: Mother, ant: Ant) {
-    super(mother, ant);
+    return list[0];
   }
 }

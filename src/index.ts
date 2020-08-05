@@ -1,5 +1,4 @@
-import { Game } from './domain/Game/Game';
-import { IInput } from '@domain/Game';
+import { Game, IInput } from '@domain/Game';
 
 const game = new Game(7070);
 
@@ -24,5 +23,5 @@ if (IS_DEV) {
     console.log('RESULT', JSON.stringify(result, null, 2));
   }
 
-  runServer();
+  runServer().then();
 }

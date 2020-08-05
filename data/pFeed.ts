@@ -12,9 +12,9 @@ export const payload: IInput[] = [
     ],
     canvas: {
       cells: [
-        [new CM(null, 1), {}, {}, new CM(null, undefined, 1)],
+        [new CM(0, 1), {}, {}, new CM(0, undefined, 1)],
         [new CM(5), {}, new CM(2, 1), {}],
-        [new CM(9), {}, new CM(null, null, null), {}],
+        [new CM(9), {}, new CM(0, null, null), {}],
       ],
     },
   },
@@ -27,9 +27,9 @@ export const payload: IInput[] = [
     ],
     canvas: {
       cells: [
-        [new CM(9, 1), {}, new CM(1), new CM(null, undefined, 1)],
+        [new CM(9, 1), {}, new CM(1), new CM(0, undefined, 1)],
         [new CM(4), {}, new CM(1, 1), {}],
-        [new CM(9), {}, new CM(null, null, null), {}],
+        [new CM(9), {}, new CM(0, null, null), {}],
       ],
     },
   },
@@ -42,9 +42,9 @@ export const payload: IInput[] = [
     ],
     canvas: {
       cells: [
-        [{}, new CM(1, 1), {}, new CM(null, undefined, 1)],
-        [new CM(4), {}, new CM(null, 1), {}],
-        [new CM(9), {}, new CM(null, null, null), {}],
+        [{}, new CM(1, 1), {}, new CM(0, undefined, 1)],
+        [new CM(4), {}, new CM(0, 1), {}],
+        [new CM(9), {}, new CM(0, null, null), {}],
       ],
     },
   },
@@ -57,9 +57,9 @@ export const payload: IInput[] = [
     ],
     canvas: {
       cells: [
-        [{}, {}, new CM(1, 1), new CM(null, undefined, 1)],
-        [new CM(4), new CM(null, 1), {}, {}],
-        [new CM(9), {}, new CM(null, null, null), {}],
+        [{}, {}, new CM(1, 1), new CM(0, undefined, 1)],
+        [new CM(4), new CM(0, 1), {}, {}],
+        [new CM(9), {}, new CM(0, null, null), {}],
       ],
     },
   },
@@ -72,9 +72,9 @@ export const payload: IInput[] = [
     ],
     canvas: {
       cells: [
-        [{}, {}, new CM(1, 1), new CM(null, undefined, 1)],
-        [new CM(4), new CM(null, 1), {}, {}],
-        [new CM(9), {}, new CM(null, null, null), {}],
+        [{}, {}, new CM(1, 1), new CM(0, undefined, 1)],
+        [new CM(4), new CM(0, 1), {}, {}],
+        [new CM(9), {}, new CM(0, null, null), {}],
       ],
     },
   },

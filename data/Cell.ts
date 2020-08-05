@@ -5,8 +5,8 @@ export class CM {
   hive?: TPlayerVariant;
   food?: number;
 
-  constructor(food?: number, ant?: number, hive?: number) {
-    if (food != null) this.food = food;
+  constructor(food?: number, ant?: number | null, hive?: number | null) {
+    if (food) this.food = food;
     if (ant !== undefined) this.ant = ant === null ? 'stranger' : ant.toString();
     if (hive !== undefined) this.hive = hive === null ? 'stranger' : hive.toString();
   }
