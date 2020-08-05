@@ -5,6 +5,7 @@ import { IGoal } from '@domain/Mind/Goal';
 import { StrategyFeed } from '@domain/Mind/Strategy/StrategyFeed';
 import { StrategyHiveClean } from '@domain/Mind/Strategy/StrategyHiveClean';
 import { StrategyWait } from '@domain/Mind/Strategy/StrategyWait';
+import flatten from 'lodash/flatten';
 
 export class Planner {
   strategyList = [
@@ -15,7 +16,7 @@ export class Planner {
   ];
 
   @computed get goalList(): IGoal[] {
-    return this.strategyList.map((s) => Array.from(s.goalMap.values())).flat();
+    return flatten(this.strategyList.map((s) => Array.from(s.goalMap.values())));
   }
 
   constructor(private _root: Root) {}
