@@ -36,9 +36,9 @@ export class Game {
             req.on('end', () => {
               try {
                 const data = JSON.parse(body);
-                const response = this.handleData(data);
-                res.end(JSON.stringify({ orders: response }));
-                console.log('Tick:', data.tick, response);
+                const orders = this.handleData(data);
+                res.end(JSON.stringify({ orders }));
+                console.log('Tick:', data.tick, orders);
               } catch (error) {
                 res.end('parse data error');
                 console.log('parse error:', error.message);

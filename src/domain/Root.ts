@@ -1,7 +1,8 @@
 import { IInput } from '@domain/Game';
 import { Area } from '@domain/Area';
-import { Mind, Population } from '@domain/Mind';
+import { Mind } from '@domain/Mind';
 import { transaction } from 'mobx';
+import { Population } from '@domain/Population/Population';
 
 export class Root {
   static config = {
