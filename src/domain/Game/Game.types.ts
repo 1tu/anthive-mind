@@ -10,7 +10,7 @@ export interface IInput {
 
 export interface IAnt {
   id: number;
-  wasted: number;
+  errors: number;
   age: number;
   health: number;
   payload: number;
