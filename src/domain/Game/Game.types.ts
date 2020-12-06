@@ -13,7 +13,7 @@ export interface IAnt {
   errors: number;
   age: number;
   health: number;
-  payload: number;
+  cargo: number;
   point: { x: number; y: number };
   event: string;
 }

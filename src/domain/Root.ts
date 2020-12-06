@@ -6,7 +6,7 @@ import { Population } from '@domain/Population/Population';
 
 export class Root {
   static config = {
-    PAYLOAD_MAX: 9,
+    CARGO_MAX: 9,
     HEALTH_MAX: 9,
   };
 

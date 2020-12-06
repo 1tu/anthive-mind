@@ -7,7 +7,7 @@ import { action, computed, observable } from 'mobx';
 export class Ant extends Disposable {
   point: Point;
   @observable health!: number;
-  @observable payload!: number;
+  @observable cargo!: number;
 
   @computed get canWalk() {
     return !!this._root.area.pathfinder.neighbours(this.point).length;
@@ -25,7 +25,7 @@ export class Ant extends Disposable {
 
   @action update(ant: IAnt) {
     this.point.update(ant.point);
-    this.payload = ant.payload;
+    this.cargo = ant.cargo;
     this.health = ant.health;
   }
 
